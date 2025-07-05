@@ -5,10 +5,11 @@
 'use server';
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 const AnalyzePatientDataInputSchema = z.object({
   patientData: z.string().describe('The patient data to analyze.  Should contain all pertinent history and lab values.'),
+  documentDataUri: z.string().optional().describe("A document with patient data, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 
 export type AnalyzePatientDataInput = z.infer<typeof AnalyzePatientDataInputSchema>;
@@ -34,7 +35,13 @@ const analyzePatientDataPrompt = ai.definePrompt({
 
 Patient Data: {{{patientData}}}
 
-In your response, provide a diagnosis, a confidence level (0-1), supporting evidence, and suggested treatments.`,
+{{#if documentDataUri}}
+Analyze the following document in conjunction with the patient data provided above. The document may contain lab results, imaging reports, or other relevant medical information.
+Document:
+{{media url=documentDataUri}}
+{{/if}}
+
+Based on all available information, provide a diagnosis, a confidence level (0-1), supporting evidence from both the text and the document (if provided), and suggested treatments.`,
 });
 
 const analyzePatientDataFlow = ai.defineFlow(

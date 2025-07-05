@@ -32,18 +32,18 @@ import { AnalysisSkeleton } from '@/components/analysis-skeleton';
 import { DiagnosisDisplay } from '@/components/diagnosis-display';
 
 import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
-import { AlertTriangle, FlaskConical, Loader2 } from 'lucide-react';
+import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
 
 const formSchema = z.object({
-  patientData: z.string().min(50, {
-    message: 'Patient data must be at least 50 characters long.',
-  }),
+  patientData: z.string().optional(),
 });
 
 export default function Home() {
   const [analysis, setAnalysis] = useState<AnalyzePatientDataOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentDataUri, setDocumentDataUri] = useState<string | null>(null);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,13 +53,50 @@ export default function Home() {
     },
   });
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          variant: 'destructive',
+          title: 'File too large',
+          description: 'Please upload a file smaller than 5MB.',
+        });
+        return;
+      }
+      setDocumentFile(file);
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        setDocumentDataUri(loadEvent.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setDocumentFile(null);
+    setDocumentDataUri(null);
+  };
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!values.patientData && !documentFile) {
+      form.setError('patientData', {
+        type: 'manual',
+        message: 'Please either paste patient data or upload a document.',
+      });
+      return;
+    }
+    form.clearErrors('patientData');
+    
     setIsLoading(true);
     setError(null);
     setAnalysis(null);
 
     try {
-      const result = await analyzePatientData({ patientData: values.patientData });
+      const result = await analyzePatientData({ 
+        patientData: values.patientData || '',
+        documentDataUri: documentDataUri,
+      });
       setAnalysis(result);
     } catch (e: any) {
       const errorMessage = e.message || 'An unknown error occurred.';
@@ -93,20 +130,20 @@ export default function Home() {
                   <CardHeader>
                     <CardTitle>Patient Report</CardTitle>
                     <CardDescription>
-                      Paste the patient's report data below for AI analysis.
+                      Paste the patient's report data below or upload a document for AI analysis.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-grow">
+                  <CardContent className="flex-grow flex flex-col">
                     <FormField
                       control={form.control}
                       name="patientData"
                       render={({ field }) => (
-                        <FormItem className="h-full flex flex-col">
+                        <FormItem>
                           <FormLabel className="sr-only">Patient Data</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="e.g., Patient presents with fever, cough, and shortness of breath..."
-                              className="h-full min-h-[300px] resize-none"
+                              className="min-h-[200px] resize-none"
                               {...field}
                             />
                           </FormControl>
@@ -114,6 +151,35 @@ export default function Home() {
                         </FormItem>
                       )}
                     />
+                    <div className="relative my-4 flex items-center">
+                      <div className="flex-grow border-t border-muted"></div>
+                      <span className="flex-shrink mx-4 text-muted-foreground text-xs uppercase">Or</span>
+                      <div className="flex-grow border-t border-muted"></div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <label htmlFor="file-upload" className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
+                                <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p className="text-xs text-muted-foreground">PDF, PNG, or JPG (MAX. 5MB)</p>
+                            </div>
+                            <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept="application/pdf,image/png,image/jpeg" />
+                        </label>
+
+                        {documentFile && (
+                            <div className="flex items-center justify-between p-2.5 bg-muted/50 rounded-md text-sm border">
+                                <div className="flex items-center gap-3 overflow-hidden">
+                                    <FileIcon className="h-5 w-5 text-primary flex-shrink-0" />
+                                    <span className="font-medium truncate" title={documentFile.name}>{documentFile.name}</span>
+                                </div>
+                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0" onClick={handleRemoveFile}>
+                                    <X className="h-4 w-4" />
+                                    <span className="sr-only">Remove file</span>
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                   </CardContent>
                   <CardFooter>
                     <Button type="submit" disabled={isLoading} className="w-full">
