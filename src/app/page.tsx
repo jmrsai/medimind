@@ -95,7 +95,7 @@ export default function Home() {
     try {
       const result = await analyzePatientData({ 
         patientData: values.patientData || '',
-        documentDataUri: documentDataUri,
+        documentDataUri: documentDataUri ?? undefined,
       });
       setAnalysis(result);
     } catch (e: any) {

@@ -11,6 +11,9 @@ export async function analyzePatientData(input: AnalyzePatientDataInput): Promis
     return result;
   } catch (error) {
     console.error('Error analyzing patient data:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
     // You can throw a more specific error or return a structured error object.
     throw new Error('Failed to analyze patient data. Please try again later.');
   }

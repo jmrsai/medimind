@@ -51,6 +51,9 @@ const analyzePatientDataFlow = ai.defineFlow(
     outputSchema: AnalyzePatientDataOutputSchema,
   },
   async input => {
+    if (input.patientData.trim() === '' && !input.documentDataUri) {
+      throw new Error('Please provide either patient data text or a document for analysis.');
+    }
     const {output} = await analyzePatientDataPrompt(input);
     return output!;
   }
