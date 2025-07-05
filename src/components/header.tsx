@@ -42,11 +42,11 @@ export function Header({ isReportAvailable, onDownload }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Avatar className="h-9 w-9 cursor-pointer">
                 <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="doctor portrait" alt="User Avatar" />
-                <AvatarFallback>HP</AvatarFallback>
+                <AvatarFallback>JR</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Dr. Ada Lovelace</DropdownMenuLabel>
+              <DropdownMenuLabel>dr JMR</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
