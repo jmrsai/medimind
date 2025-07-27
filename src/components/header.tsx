@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Icons } from '@/components/icons';
@@ -42,11 +43,11 @@ export function Header({ isReportAvailable, onDownload }: HeaderProps) {
             <DropdownMenuTrigger asChild>
               <Avatar className="h-9 w-9 cursor-pointer">
                 <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="doctor portrait" alt="User Avatar" />
-                <AvatarFallback>JR</AvatarFallback>
+                <AvatarFallback>JMR</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>dr JMR</DropdownMenuLabel>
+              <DropdownMenuLabel>Dr. JMR</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />

@@ -1,3 +1,5 @@
+
+import { cn } from '@/lib/utils';
 import { AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -8,14 +10,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Activity,
   Apple,
   BrainCog,
   ClipboardList,
   FlaskConical,
   GaugeCircle,
   HeartPulse,
-  Lightbulb,
   Pill,
   Stethoscope,
   TestTubeDiagonal,
@@ -44,7 +44,7 @@ const SectionCard = ({
     <CardHeader className='pb-4'>
       <div className="flex items-center gap-3">
         {icon}
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
+        <CardTitle className="text-lg font-semibold">{title}</CardTitle>
       </div>
     </CardHeader>
     <CardContent className="text-sm text-muted-foreground space-y-2">
