@@ -83,7 +83,7 @@ export function DiagnosisDisplay({ data, documentFile, documentDataUri }: Diagno
   ].sort((a, b) => b.confidence - a.confidence);
 
   return (
-    <div id="printable-area" className="space-y-6 printable-area">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <div className='flex items-center gap-2 text-primary'>

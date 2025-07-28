@@ -196,6 +196,9 @@ export default function Home() {
             </Form>
           </div>
           <div className="flex flex-col">
+            <div id="printable-area" className="printable-area space-y-6">
+              {analysis && !isLoading && <DiagnosisDisplay data={analysis} documentFile={documentFile} documentDataUri={documentDataUri} />}
+            </div>
             {isLoading && <AnalysisSkeleton />}
             {error && !isLoading && (
               <Alert variant="destructive">
@@ -204,7 +207,6 @@ export default function Home() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            {analysis && !isLoading && <DiagnosisDisplay data={analysis} documentFile={documentFile} documentDataUri={documentDataUri} />}
             {!isLoading && !error && !analysis && <NewWelcomeComponent />}
           </div>
         </div>
