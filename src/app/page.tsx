@@ -27,10 +27,9 @@ import {
 } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Header } from '@/components/header';
-import { WelcomeDisplay } from '@/components/welcome-display';
+import { NewWelcomeComponent } from '@/components/new-welcome-component';
 import { AnalysisSkeleton } from '@/components/analysis-skeleton';
 import { DiagnosisDisplay } from '@/components/diagnosis-display';
-import { NewWelcomeComponent } from '@/components/new-welcome-component';
 
 import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
@@ -205,7 +204,7 @@ export default function Home() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            {analysis && !isLoading && <DiagnosisDisplay data={analysis} />}
+            {analysis && !isLoading && <DiagnosisDisplay data={analysis} documentFile={documentFile} documentDataUri={documentDataUri} />}
             {!isLoading && !error && !analysis && <NewWelcomeComponent />}
           </div>
         </div>

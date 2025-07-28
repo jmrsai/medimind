@@ -13,6 +13,7 @@ import {
   Apple,
   BrainCog,
   ClipboardList,
+  FileText,
   FlaskConical,
   GaugeCircle,
   HeartPulse,
@@ -27,6 +28,8 @@ import { KeyTakeaways } from './key-takeaways';
 
 interface DiagnosisDisplayProps {
   data: AnalyzePatientDataOutput;
+  documentFile: File | null;
+  documentDataUri: string | null;
 }
 
 const SectionCard = ({
@@ -66,7 +69,7 @@ const ListSection = ({ items }: { items: string[] }) => {
   );
 };
 
-export function DiagnosisDisplay({ data }: DiagnosisDisplayProps) {
+export function DiagnosisDisplay({ data, documentFile, documentDataUri }: DiagnosisDisplayProps) {
   const confidencePercent = Math.round(data.confidenceLevel * 100);
   
   const chartData = [
@@ -119,6 +122,18 @@ export function DiagnosisDisplay({ data }: DiagnosisDisplayProps) {
       </Card>
       
       <KeyTakeaways data={data} />
+
+      {documentFile && documentDataUri && (
+        <SectionCard icon={<FileText className="h-5 w-5 text-primary" />} title={`Uploaded Document: ${documentFile.name}`}>
+          {documentFile.type === 'application/pdf' ? (
+            <div className="h-[500px] w-full">
+              <iframe src={documentDataUri} className="w-full h-full" title={documentFile.name} />
+            </div>
+          ) : (
+            <img src={documentDataUri} alt={documentFile.name} className="max-w-full h-auto rounded-md" />
+          )}
+        </SectionCard>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <SectionCard icon={<BrainCog className="h-5 w-5 text-primary" />} title="Diagnostic Reasoning">
