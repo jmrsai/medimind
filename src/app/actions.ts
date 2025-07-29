@@ -1,3 +1,4 @@
+
 'use server';
 
 import { analyzePatientData as analyzePatientDataFlow, AnalyzePatientDataInput, AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
@@ -6,6 +7,10 @@ import { saveAnalysisHistory } from '@/lib/firestore';
 
 
 export async function analyzePatientData(input: AnalyzePatientDataInput, idToken: string): Promise<AnalyzePatientDataOutput> {
+  if (!auth) {
+    throw new Error('The backend is not configured for authentication. The history feature is disabled.');
+  }
+
   const decodedToken = await auth.verifyIdToken(idToken);
   const uid = decodedToken.uid;
 

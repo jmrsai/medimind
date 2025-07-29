@@ -1,6 +1,7 @@
 import { db } from '@/lib/firebase';
 import { AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
+import { dbAdmin } from './firebase-admin';
 
 export interface AnalysisHistoryRecord {
     id: string;
@@ -11,14 +12,18 @@ export interface AnalysisHistoryRecord {
 
 // Save analysis to history
 export async function saveAnalysisHistory(uid: string, analysis: AnalyzePatientDataOutput): Promise<void> {
+    if (!dbAdmin) {
+        console.log("Admin SDK not initialized. Skipping history save.");
+        return;
+    }
     try {
-        await addDoc(collection(db, 'analysisHistory'), {
+        await dbAdmin.collection('analysisHistory').add({
             uid: uid,
             analysis: analysis,
-            createdAt: serverTimestamp(),
+            createdAt: Timestamp.now(),
         });
     } catch (error) {
-        console.error("Error writing document: ", error);
+        console.error("Error writing document with Admin SDK: ", error);
         // Not re-throwing error to not block the user flow
     }
 }
