@@ -7,32 +7,31 @@ import { saveAnalysisHistory } from '@/lib/firestore';
 
 
 export async function analyzePatientData(input: AnalyzePatientDataInput, idToken: string): Promise<AnalyzePatientDataOutput> {
-  if (!auth) {
-    throw new Error('The backend is not configured for authentication. The history feature is disabled.');
-  }
 
-  const decodedToken = await auth.verifyIdToken(idToken);
-  const uid = decodedToken.uid;
-
-  if (!uid) {
-    throw new Error('You must be logged in to perform an analysis.');
-  }
+  const result = await analyzePatientDataFlow(input);
 
   try {
-    const result = await analyzePatientDataFlow(input);
-    
-    // Save history in the background, but don't let it block the response
-    // in case of failure.
-    saveAnalysisHistory(uid, result).catch(err => {
-      console.error("Failed to save analysis history:", err);
-    });
+    if (!auth) {
+        // This condition will be true if Firebase Admin SDK is not initialized.
+        console.warn('Firebase Admin is not configured. Skipping history save.');
+    } else {
+        const decodedToken = await auth.verifyIdToken(idToken);
+        const uid = decodedToken.uid;
 
-    return result;
-  } catch (error) {
-    console.error('Error analyzing patient data in server action:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+        if (!uid) {
+            console.warn('User is not properly logged in. Skipping history save.');
+        } else {
+            // Save history in the background, but don't let it block the response
+            // in case of failure.
+            saveAnalysisHistory(uid, result).catch(err => {
+              console.error("Failed to save analysis history:", err);
+            });
+        }
     }
-    throw new Error('An unknown error occurred during analysis.');
+  } catch (error) {
+      console.error('An error occurred while trying to save analysis history:', error);
+      // We are not re-throwing the error to ensure the analysis result is still returned to the user.
   }
+
+  return result;
 }

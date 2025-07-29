@@ -13,7 +13,8 @@ export interface AnalysisHistoryRecord {
 // Save analysis to history
 export async function saveAnalysisHistory(uid: string, analysis: AnalyzePatientDataOutput): Promise<void> {
     if (!dbAdmin) {
-        console.log("Admin SDK not initialized. Skipping history save.");
+        // This is a safeguard. The primary check should be in the calling function.
+        console.warn("Admin SDK not initialized. Skipping history save.");
         return;
     }
     try {
