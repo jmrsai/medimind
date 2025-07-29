@@ -17,6 +17,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
+      if (typeof window !== 'undefined') {
+        // Reset trial count on successful login
+        localStorage.removeItem('analysisCount');
+      }
       router.push('/');
     }
   }, [user, loading, router]);
@@ -25,7 +29,7 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/');
+      // The useEffect will handle the redirect
     } catch (error) {
       console.error('Error signing in with Google', error);
       // You could show a toast notification here
