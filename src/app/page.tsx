@@ -1,11 +1,14 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { analyzePatientData } from '@/app/actions';
+import { useAuth } from '@/hooks/use-auth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,12 +36,15 @@ import { DiagnosisDisplay } from '@/components/diagnosis-display';
 
 import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
+import { Icons } from '@/components/icons';
 
 const formSchema = z.object({
   patientData: z.string().optional(),
 });
 
 export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [analysis, setAnalysis] = useState<AnalyzePatientDataOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +58,20 @@ export default function Home() {
       patientData: '',
     },
   });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Icons.logo className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
