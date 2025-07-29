@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -99,6 +98,11 @@ export default function Home() {
   };
   
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user) {
+        setError("You must be logged in to perform an analysis.");
+        return;
+    }
+
     if (!values.patientData && !documentFile) {
       form.setError('patientData', {
         type: 'manual',
@@ -113,10 +117,11 @@ export default function Home() {
     setAnalysis(null);
 
     try {
+      const idToken = await user.getIdToken();
       const result = await analyzePatientData({ 
         patientData: values.patientData || '',
         documentDataUri: documentDataUri ?? undefined,
-      });
+      }, idToken);
       setAnalysis(result);
     } catch (e: any) {
       const errorMessage = e.message || 'An unknown error occurred.';

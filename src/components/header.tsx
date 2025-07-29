@@ -1,6 +1,6 @@
-
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Download, LogOut, User, LogIn } from 'lucide-react';
+import { Download, LogOut, User, LogIn, History } from 'lucide-react';
 
 type HeaderProps = {
   isReportAvailable: boolean;
@@ -40,12 +40,12 @@ export function Header({ isReportAvailable, onDownload }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm no-print">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <Icons.logo className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             MediMind
           </h1>
-        </div>
+        </Link>
         <div className="flex flex-1 items-center justify-end space-x-4">
           {user && (
             <Button
@@ -70,6 +70,12 @@ export function Header({ isReportAvailable, onDownload }: HeaderProps) {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>{user.displayName ?? 'User'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/history">
+                    <History className="mr-2 h-4 w-4" />
+                    <span>History</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
