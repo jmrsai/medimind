@@ -1,5 +1,7 @@
 # MediMind: AI-Powered Medical Diagnosis Assistant
 
+Created by JMR
+
 MediMind is an advanced, AI-driven web application designed to support healthcare professionals by providing rapid analysis of patient reports and summarization of medical documents. It leverages generative AI to offer insights, potential diagnoses, and treatment recommendations based on the data provided.
 
 ## Key Features

@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex h-16 items-center border-b px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <Icons.logo className="h-7 w-7 text-primary" />
-              <span className="font-headline text-xl">MediMind</span>
+              <span className="font-headline text-xl">MediMind by JMR</span>
             </Link>
           </div>
           <div className="flex-1">
@@ -69,7 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="flex h-16 items-center gap-4 border-b bg-card px-6 md:hidden">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <Icons.logo className="h-7 w-7 text-primary" />
-              <span className="sr-only">MediMind</span>
+              <span className="sr-only">MediMind by JMR</span>
             </Link>
             <nav className="flex-1 text-center">
                  {NAV_ITEMS.map(({ href, label }) => (
