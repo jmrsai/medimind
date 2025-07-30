@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { summarizeDocument } from '@/app/actions';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +24,14 @@ import { AnalysisSkeleton } from '@/components/analysis-skeleton';
 
 import { type SummarizeDocumentOutput } from '@/ai/flows/summarize-document';
 import { AlertTriangle, BookText, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
+
+// Mock function
+const summarizeDocument = async (input: any): Promise<any> => {
+  console.log("Summarization request:", input);
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  // Return an error or mock data
+  throw new Error("AI functionality is temporarily disabled due to a dependency conflict. Please try again later.");
+}
 
 const formSchema = z.object({
   document: z.instanceof(File).optional(),

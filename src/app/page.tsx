@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { analyzePatientData } from '@/app/actions';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +32,15 @@ import { DiagnosisDisplay } from '@/components/diagnosis-display';
 import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
 import { WelcomeDisplay } from '@/components/welcome-display';
+
+// Mock function
+const analyzePatientData = async (input: any): Promise<any> => {
+  console.log("Analysis request:", input);
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  // Return an error or mock data
+  throw new Error("AI functionality is temporarily disabled due to a dependency conflict. Please try again later.");
+}
+
 
 const formSchema = z.object({
   patientData: z.string().optional(),
