@@ -108,9 +108,9 @@ const analyzePatientDataFlow = ai.defineFlow(
     }
     
     // Asynchronously save to Firestore without waiting for it to complete
-    saveAnalysisHistory(output).catch(err => {
-        console.error("Failed to save analysis history:", err);
-    });
+    // saveAnalysisHistory(output).catch(err => {
+    //     console.error("Failed to save analysis history:", err);
+    // });
 
     return output;
   }

@@ -9,12 +9,11 @@ export interface AnalysisHistoryRecord {
     analysis: AnalyzePatientDataOutput;
 }
 
-// History saving is disabled as authentication has been removed.
-// The functions are kept for potential future use but are not currently called.
-
+// History saving is disabled as the Firebase Admin SDK has been removed 
+// to prevent runtime errors.
 export async function saveAnalysisHistory(analysis: AnalyzePatientDataOutput): Promise<void> {
     if (!dbAdmin) {
-        console.warn("Admin SDK not initialized. Skipping history save.");
+        console.warn("Admin SDK not available. Skipping history save.");
         return;
     }
     try {
