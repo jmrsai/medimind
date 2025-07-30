@@ -28,54 +28,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { DiagnosisDisplay } from '@/components/diagnosis-display';
 
-import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
+import { type AnalyzePatientDataOutput, analyzePatientData } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
 import { WelcomeDisplay } from '@/components/welcome-display';
 import { LogoLoader } from '@/components/logo-loader';
-
-// Mock function
-const analyzePatientData = async (input: any): Promise<any> => {
-  console.log("Analysis request:", input);
-  await new Promise(resolve => setTimeout(resolve, 2500));
-  
-  if (Math.random() > 0.9) {
-      throw new Error("A random error occurred during analysis.");
-  }
-
-  return {
-    primaryDiagnosis: 'Acute Bronchitis',
-    confidenceLevel: 0.85,
-    diagnosticReasoning: 'The patient\'s symptoms of cough, fever, and shortness of breath are classic indicators of acute bronchitis, especially given the time of year. The absence of severe respiratory distress makes pneumonia less likely, but it remains a differential.',
-    differentialDiagnoses: [
-      'Pneumonia',
-      'Influenza',
-      'Asthma Exacerbation',
-      'COVID-19'
-    ],
-    recommendedTests: [
-      'Chest X-Ray to rule out pneumonia',
-      'Complete Blood Count (CBC)',
-      'Sputum Culture if symptoms persist'
-    ],
-    prognosis: 'Excellent with proper rest and supportive care. Symptoms are expected to resolve within 1-3 weeks.',
-    treatmentPlan: {
-      medications: [
-        'Over-the-counter cough suppressant (e.g., Dextromethorphan)',
-        'Ibuprofen or Acetaminophen for fever and discomfort',
-        'Consider Albuterol inhaler if wheezing is present'
-      ],
-      therapies: [
-        'Humidifier use to ease breathing',
-        'Rest and hydration are crucial',
-      ],
-      lifestyleModifications: [
-        'Avoid smoke and other lung irritants',
-        'Increase fluid intake',
-        'Get adequate sleep'
-      ]
-    }
-  };
-}
 
 
 const formSchema = z.object({

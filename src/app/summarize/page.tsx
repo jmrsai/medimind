@@ -20,23 +20,10 @@ import {
   Form,
 } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { type SummarizeDocumentOutput } from '@/ai/flows/summarize-document';
+import { type SummarizeDocumentOutput, summarizeDocument } from '@/ai/flows/summarize-document';
 import { AlertTriangle, BookText, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
 import { LogoLoader } from '@/components/logo-loader';
 
-// Mock function
-const summarizeDocument = async (input: any): Promise<any> => {
-  console.log("Summarization request:", input);
-  await new Promise(resolve => setTimeout(resolve, 2500));
-  
-  if (Math.random() > 0.9) {
-      throw new Error("A random error occurred during summarization.");
-  }
-
-  return {
-    summary: 'This document details the results of a clinical trial for a new hypertension medication. The trial involved 500 participants over a 6-month period. Key findings indicate a significant reduction in systolic and diastolic blood pressure compared to the placebo group. The medication was generally well-tolerated, with mild side effects such as dizziness and fatigue reported in a small percentage of participants. The study concludes that the new drug is a promising and effective treatment for hypertension.',
-  };
-}
 
 const formSchema = z.object({
   document: z.instanceof(File).optional(),
