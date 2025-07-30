@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { AppShell } from '@/components/app-shell';
 
 export const metadata: Metadata = {
-  title: 'MediMind',
-  description: 'AI-powered medical diagnosis support tool for healthcare professionals.',
+  title: 'MediMind by JMR',
+  description: 'AI-powered medical diagnosis support tool for healthcare professionals, created by JMR.',
 };
 
 export default function RootLayout({

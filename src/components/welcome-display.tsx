@@ -11,7 +11,7 @@ export function WelcomeDisplay() {
                 <Icons.logo className="w-8 h-8 text-primary" />
             </div>
             <CardTitle className="text-3xl font-headline">MediMind Analysis</CardTitle>
-            <p className="pt-2 text-muted-foreground text-lg">Your AI-powered diagnostic partner</p>
+            <p className="pt-2 text-muted-foreground text-lg">Your AI-powered diagnostic partner, by JMR.</p>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-full p-10 space-y-8 text-center">
             
