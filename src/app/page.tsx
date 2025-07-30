@@ -1,14 +1,12 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { analyzePatientData } from '@/app/actions';
-import { useAuth } from '@/hooks/use-auth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,29 +31,21 @@ import { Header } from '@/components/header';
 import { NewWelcomeComponent } from '@/components/new-welcome-component';
 import { AnalysisSkeleton } from '@/components/analysis-skeleton';
 import { DiagnosisDisplay } from '@/components/diagnosis-display';
-import { TrialLimitDialog } from '@/components/trial-limit-dialog';
 
 import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
-import { Icons } from '@/components/icons';
 
 const formSchema = z.object({
   patientData: z.string().optional(),
 });
 
-const MAX_ANONYMOUS_ANALYSES = 3;
-
 export default function Home() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
   const [analysis, setAnalysis] = useState<AnalyzePatientDataOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
   const [documentDataUri, setDocumentDataUri] = useState<string | null>(null);
   const { toast } = useToast();
-  const [analysisCount, setAnalysisCount] = useState(0);
-  const [showTrialDialog, setShowTrialDialog] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,21 +53,6 @@ export default function Home() {
       patientData: '',
     },
   });
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !user) {
-      const count = parseInt(localStorage.getItem('analysisCount') || '0', 10);
-      setAnalysisCount(count);
-    }
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Icons.logo className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -105,11 +80,6 @@ export default function Home() {
   };
   
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user && analysisCount >= MAX_ANONYMOUS_ANALYSES) {
-        setShowTrialDialog(true);
-        return;
-    }
-
     if (!values.patientData && !documentFile) {
       form.setError('patientData', {
         type: 'manual',
@@ -117,6 +87,7 @@ export default function Home() {
       });
       return;
     }
+
     form.clearErrors('patientData');
     
     setIsLoading(true);
@@ -124,20 +95,11 @@ export default function Home() {
     setAnalysis(null);
 
     try {
-      const idToken = await user?.getIdToken();
-      // Guests won't have an idToken, but the AI flow can still run. History saving will be skipped.
       const result = await analyzePatientData({ 
         patientData: values.patientData || '',
         documentDataUri: documentDataUri ?? undefined,
-      }, idToken ?? 'anonymous');
+      });
       setAnalysis(result);
-
-      if (!user) {
-        const newCount = analysisCount + 1;
-        setAnalysisCount(newCount);
-        localStorage.setItem('analysisCount', newCount.toString());
-      }
-
     } catch (e: any) {
       const errorMessage = e.message || 'An unknown error occurred.';
       setError(errorMessage);
@@ -155,11 +117,8 @@ export default function Home() {
     window.print();
   };
 
-  const isTrialEnded = !user && analysisCount >= MAX_ANONYMOUS_ANALYSES;
-
   return (
     <>
-      <TrialLimitDialog open={showTrialDialog} onOpenChange={setShowTrialDialog} />
       <div className="flex min-h-screen w-full flex-col bg-background">
         <Header
           isReportAvailable={!!analysis}
@@ -175,7 +134,6 @@ export default function Home() {
                       <CardTitle>Patient Report</CardTitle>
                       <CardDescription>
                         Paste the patient's report data below or upload a document for AI analysis.
-                        {!user && <span> You have {MAX_ANONYMOUS_ANALYSES - analysisCount} analyses remaining.</span>}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow flex flex-col">
@@ -227,13 +185,13 @@ export default function Home() {
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button type="submit" disabled={isLoading || isTrialEnded} className="w-full">
+                      <Button type="submit" disabled={isLoading} className="w-full">
                         {isLoading ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
                           <FlaskConical className="mr-2 h-4 w-4" />
                         )}
-                        {isTrialEnded ? 'Login to Continue' : 'Analyze Data'}
+                        Analyze Data
                       </Button>
                     </CardFooter>
                   </Card>
