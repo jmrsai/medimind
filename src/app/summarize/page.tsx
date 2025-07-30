@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { analyzePatientData } from '@/app/actions';
+import { summarizeDocument } from '@/app/actions';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,29 +17,46 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AnalysisSkeleton } from '@/components/analysis-skeleton';
-import { DiagnosisDisplay } from '@/components/diagnosis-display';
 
-import { type AnalyzePatientDataOutput } from '@/ai/flows/analyze-patient-data';
-import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
-import { WelcomeDisplay } from '@/components/welcome-display';
+import { type SummarizeDocumentOutput } from '@/ai/flows/summarize-document';
+import { AlertTriangle, BookText, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
 
 const formSchema = z.object({
-  patientData: z.string().optional(),
+  document: z.instanceof(File).optional(),
 });
 
+function SummaryDisplay({ summary, title }: { summary: string, title: string }) {
+    return (
+        <Card className="bg-white dark:bg-card shadow-lg">
+            <CardHeader>
+                <CardTitle>Summary for: {title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="whitespace-pre-wrap">{summary}</p>
+            </CardContent>
+        </Card>
+    )
+}
+
+function Welcome() {
+    return (
+        <Card className="h-full border-0 shadow-none bg-transparent flex items-center justify-center">
+             <div className="text-center">
+                <BookText className="w-16 h-16 mx-auto mb-4 text-primary" />
+                <h2 className="text-2xl font-bold mb-2">Document Summarizer</h2>
+                <p className="text-muted-foreground">Upload a document to get a concise summary.</p>
+            </div>
+        </Card>
+    )
+}
+
 export default function Page() {
-  const [analysis, setAnalysis] = useState<AnalyzePatientDataOutput | null>(null);
+  const [summary, setSummary] = useState<SummarizeDocumentOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
@@ -48,9 +65,6 @@ export default function Page() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      patientData: '',
-    },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,33 +92,31 @@ export default function Page() {
     setDocumentDataUri(null);
   };
   
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!values.patientData && !documentFile) {
-      form.setError('patientData', {
-        type: 'manual',
-        message: 'Please either paste patient data or upload a document.',
+  const onSubmit = async () => {
+    if (!documentFile) {
+      toast({
+          variant: 'destructive',
+          title: 'No file selected',
+          description: 'Please upload a document to summarize.',
       });
       return;
     }
-
-    form.clearErrors('patientData');
     
     setIsLoading(true);
     setError(null);
-    setAnalysis(null);
+    setSummary(null);
 
     try {
-      const result = await analyzePatientData({ 
-        patientData: values.patientData || '',
-        documentDataUri: documentDataUri ?? undefined,
+      const result = await summarizeDocument({ 
+        documentDataUri: documentDataUri!,
       });
-      setAnalysis(result);
+      setSummary(result);
     } catch (e: any) {
       const errorMessage = e.message || 'An unknown error occurred.';
       setError(errorMessage);
       toast({
         variant: 'destructive',
-        title: 'Analysis Failed',
+        title: 'Summarization Failed',
         description: errorMessage,
       });
     } finally {
@@ -119,41 +131,18 @@ export default function Page() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
             <Card className="flex flex-col h-full bg-white dark:bg-card shadow-lg">
               <CardHeader>
-                <CardTitle>Patient Report Analysis</CardTitle>
+                <CardTitle>Summarize Document</CardTitle>
                 <CardDescription>
-                  Paste the patient's report data below or upload a document for AI analysis.
+                  Upload a document to generate a concise summary.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-grow flex flex-col">
-                <FormField
-                  control={form.control}
-                  name="patientData"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">Patient Data</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="e.g., Patient presents with fever, cough, and shortness of breath..."
-                          className="min-h-[200px] resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="relative my-4 flex items-center">
-                  <div className="flex-grow border-t border-muted"></div>
-                  <span className="flex-shrink mx-4 text-muted-foreground text-xs uppercase">Or</span>
-                  <div className="flex-grow border-t border-muted"></div>
-                </div>
-                
+              <CardContent className="flex-grow flex flex-col justify-center">
                 <div className="space-y-2">
-                    <label htmlFor="file-upload" className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors">
+                    <label htmlFor="file-upload" className="relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors">
                         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                            <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
-                            <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p className="text-xs text-muted-foreground">PDF, PNG, or JPG (MAX. 5MB)</p>
+                            <Upload className="w-10 h-10 mb-4 text-muted-foreground" />
+                            <p className="mb-2 text-md text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p className="text-sm text-muted-foreground">PDF, PNG, or JPG (MAX. 5MB)</p>
                         </div>
                         <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept="application/pdf,image/png,image/jpeg" />
                     </label>
@@ -173,13 +162,13 @@ export default function Page() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit" disabled={isLoading} className="w-full" size="lg">
+                <Button type="submit" disabled={isLoading || !documentFile} className="w-full" size="lg">
                   {isLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <FlaskConical className="mr-2 h-4 w-4" />
+                    <BookText className="mr-2 h-4 w-4" />
                   )}
-                  Analyze Patient Data
+                  Summarize Document
                 </Button>
               </CardFooter>
             </Card>
@@ -187,9 +176,7 @@ export default function Page() {
         </Form>
       </div>
       <div className="flex flex-col">
-        <div id="printable-area" className="printable-area space-y-6">
-          {analysis && !isLoading && <DiagnosisDisplay data={analysis} documentFile={documentFile} documentDataUri={documentDataUri} />}
-        </div>
+        {summary && !isLoading && <SummaryDisplay summary={summary.summary} title={documentFile?.name || 'Document'} />}
         {isLoading && <AnalysisSkeleton />}
         {error && !isLoading && (
           <Alert variant="destructive">
@@ -198,7 +185,7 @@ export default function Page() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        {!isLoading && !error && !analysis && <WelcomeDisplay />}
+        {!isLoading && !error && !summary && <Welcome />}
       </div>
     </div>
   );

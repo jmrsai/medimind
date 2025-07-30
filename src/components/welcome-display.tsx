@@ -1,36 +1,47 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FlaskConical, Stethoscope, FileText, Bot } from 'lucide-react';
+import { Bot, FileText, FlaskConical, Lightbulb, Stethoscope, Zap, CheckCircle } from 'lucide-react';
+import { Icons } from './icons';
 
 export function WelcomeDisplay() {
   return (
-    <Card className="h-full border-2 border-dashed shadow-none bg-card/50">
-      <CardHeader className="text-center">
-        <div className="inline-flex items-center justify-center p-3 mx-auto mb-4 border rounded-full bg-primary/10 w-14 h-14">
-            <Bot className="w-8 h-8 text-primary" />
-        </div>
-        <CardTitle className='text-2xl'>Welcome to MediMind</CardTitle>
-        <p className="pt-2 text-muted-foreground">Your AI-Powered Diagnostic Assistant</p>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center text-center h-full space-y-6">
-        <p className="max-w-md text-muted-foreground">
-          To begin, provide patient data on the left using text or a document upload. The AI will generate a comprehensive analysis including diagnoses, treatment plans, and more.
-        </p>
-        <div className="grid grid-cols-1 gap-4 pt-4 text-sm md:grid-cols-3 w-full max-w-lg">
-          <div className="flex flex-col items-center gap-2 p-4 border rounded-lg bg-background">
-            <FileText className="w-6 h-6 text-accent" />
-            <span className='font-medium'>Input Data</span>
-          </div>
-          <div className="flex flex-col items-center gap-2 p-4 border rounded-lg bg-background">
-            <FlaskConical className="w-6 h-6 text-accent" />
-            <span className='font-medium'>AI Analysis</span>
-          </div>
-          <div className="flex flex-col items-center gap-2 p-4 border rounded-lg bg-background">
-            <Stethoscope className="w-6 h-6 text-accent" />
-            <span className='font-medium'>View Results</span>
-          </div>
-        </div>
-      </CardContent>
+    <Card className="h-full border-0 shadow-none bg-transparent">
+        <CardHeader className='text-center'>
+            <div className="inline-flex items-center justify-center p-3 mx-auto mb-4 bg-primary/10 rounded-full w-16 h-16">
+                <Icons.logo className="w-8 h-8 text-primary" />
+            </div>
+            <CardTitle className="text-3xl font-headline">MediMind Analysis</CardTitle>
+            <p className="pt-2 text-muted-foreground text-lg">Your AI-powered diagnostic partner</p>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center h-full p-10 space-y-8 text-center">
+            
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <div className="flex flex-col items-center p-4 space-y-2">
+                    <FileText className="w-10 h-10 mb-2 text-primary" />
+                    <h3 className="font-semibold text-lg">1. Input Data</h3>
+                    <p className="text-sm text-muted-foreground">Paste a report or upload a file.</p>
+                </div>
+                <div className="flex flex-col items-center p-4 space-y-2">
+                    <Zap className="w-10 h-10 mb-2 text-primary" />
+                    <h3 className="font-semibold text-lg">2. Analyze</h3>
+                    <p className="text-sm text-muted-foreground">Our AI provides instant insights.</p>
+                </div>
+                <div className="flex flex-col items-center p-4 space-y-2">
+                    <Lightbulb className="w-10 h-10 mb-2 text-primary" />
+                    <h3 className="font-semibold text-lg">3. Get Results</h3>
+                    <p className="text-sm text-muted-foreground">Receive a detailed diagnostic report.</p>
+                </div>
+            </div>
+
+            <div className="w-full max-w-md p-6 pt-4 border rounded-lg bg-background">
+                <h4 className="mb-3 font-semibold text-center text-md">What you'll get:</h4>
+                <ul className="space-y-2 text-sm text-left text-muted-foreground">
+                    <li className="flex items-start"><CheckCircle className="w-4 h-4 mr-2 mt-0.5 text-green-500 shrink-0" /> Primary & Differential Diagnoses</li>
+                    <li className="flex items-start"><CheckCircle className="w-4 h-4 mr-2 mt-0.5 text-green-500 shrink-0" /> Confidence Score & Reasoning</li>
+                    <li className="flex items-start"><CheckCircle className="w-4 h-4 mr-2 mt-0.5 text-green-500 shrink-0" /> Full Treatment Plan</li>
+                </ul>
+            </div>
+        </CardContent>
     </Card>
   );
 }

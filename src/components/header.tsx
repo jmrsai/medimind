@@ -13,11 +13,11 @@ type HeaderProps = {
 
 export function Header({ isReportAvailable, onDownload }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm no-print">
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm no-print">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <Link href="/" className="flex items-center gap-3">
-          <Icons.logo className="h-7 w-7 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <Icons.logo className="h-8 w-8 text-primary" />
+          <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
             MediMind
           </h1>
         </Link>

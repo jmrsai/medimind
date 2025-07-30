@@ -7,7 +7,7 @@ export const Icons = {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
