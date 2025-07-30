@@ -8,7 +8,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 
 const AnalyzePatientDataInputSchema = z.object({
-  patientData: z.string().describe('The patient data to analyze. Should contain all pertinent history and lab values.'),
+  patientData: z.string().optional().describe('The patient data to analyze. Should contain all pertinent history and lab values.'),
   documentDataUri: z.string().optional().describe("A document with patient data, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 
@@ -41,7 +41,9 @@ const analyzePatientDataPrompt = ai.definePrompt({
   prompt: `You are an expert AI medical diagnosis assistant. Your role is to provide a comprehensive and structured analysis of patient data for a healthcare professional.
 
 Analyze the following patient information meticulously.
+{{#if patientData}}
 Patient Data Text: {{{patientData}}}
+{{/if}}
 
 {{#if documentDataUri}}
 Also, analyze the content of this document, which may contain lab results, imaging reports, or other relevant medical information.
@@ -64,11 +66,15 @@ const analyzePatientDataFlow = ai.defineFlow(
     inputSchema: AnalyzePatientDataInputSchema,
     outputSchema: AnalyzePatientDataOutputSchema,
   },
-  async input => {
-    if (input.patientData.trim() === '' && !input.documentDataUri) {
+  async (input) => {
+    const hasPatientDataText = input.patientData && input.patientData.trim() !== '';
+    const hasDocument = !!input.documentDataUri;
+
+    if (!hasPatientDataText && !hasDocument) {
       throw new Error('Please provide either patient data text or a document for analysis.');
     }
-    const {output} = await analyzePatientDataPrompt(input);
+    
+    const { output } = await analyzePatientDataPrompt(input);
     return output!;
   }
 );
