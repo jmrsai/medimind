@@ -84,7 +84,7 @@ export type AnalyzePatientDataOutput = z.infer<
 
 const analyzePatientDataPrompt = ai.definePrompt({
     name: 'analyzePatientDataPrompt',
-    model: 'googleai/gemini-1.5-flash-latest',
+    model: 'googleai/gemini-1.5-pro-latest',
     input: { schema: PatientAnalysisInputSchema },
     output: { schema: PatientAnalysisOutputSchema },
     prompt: `You are a world-class medical diagnostician AI. Your role is to analyze patient data with extreme accuracy and provide a comprehensive, structured report for healthcare professionals.
