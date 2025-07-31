@@ -15,12 +15,14 @@ export function Header({ isReportAvailable, onDownload }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm no-print">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <Link href="/" className="flex items-center gap-3">
-          <Icons.logo className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-            MediMind
-          </h1>
-        </Link>
+        <div className="md:hidden">
+            <Link href="/" className="flex items-center gap-3">
+              <Icons.logo className="h-8 w-8 text-primary" />
+               <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
+                MediMind
+              </h1>
+            </Link>
+        </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button
             onClick={onDownload}

@@ -8,6 +8,7 @@ import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { BookText, FlaskConical, Download } from 'lucide-react';
 import { Separator } from './ui/separator';
+import { Header } from './header';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Patient Analysis', icon: FlaskConical },
@@ -18,8 +19,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const handleDownload = () => {
-    // This is a placeholder. In a real app, this might be disabled
-    // if the current page doesn't have a downloadable report.
     if (pathname === '/') {
         window.print();
     } else {
@@ -56,36 +55,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
           </div>
-          <div className="mt-auto p-4">
-             <Separator className="my-4" />
-             <Button variant="ghost" className="w-full justify-start" onClick={handleDownload} disabled={!isReportAvailable}>
-                <Download className="mr-2 h-4 w-4" />
-                Download Report
-            </Button>
-          </div>
         </div>
       </aside>
       <div className="flex flex-col">
-        <header className="flex h-16 items-center gap-4 border-b bg-card px-6 md:hidden">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Icons.logo className="h-7 w-7 text-primary" />
-              <span className="sr-only">MediMind by JMR</span>
-            </Link>
-            <nav className="flex-1 text-center">
-                 {NAV_ITEMS.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    'rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
-                    { 'text-primary': pathname === href }
-                  )}
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
-        </header>
+        <Header isReportAvailable={isReportAvailable} onDownload={handleDownload} />
         <main className="flex-1 p-4 sm:p-6 md:p-8">{children}</main>
       </div>
     </div>

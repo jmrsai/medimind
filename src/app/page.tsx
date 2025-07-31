@@ -113,7 +113,7 @@ export default function Page() {
   };
 
   return (
-    <div className="grid h-full grid-cols-1 gap-8 md:grid-cols-2">
+    <div className="grid h-full grid-cols-1 md:grid-cols-2 gap-8 md:gap-4 lg:gap-8">
       <div className="flex flex-col gap-8 no-print">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
