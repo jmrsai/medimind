@@ -29,14 +29,14 @@ export function KeyTakeaways({ data }: KeyTakeawaysProps) {
             <div className="flex flex-col items-center justify-center p-4 text-center border rounded-lg bg-card/50">
                 <TestTubeDiagonal className="w-8 h-8 mb-2 text-accent" />
                 <h4 className="font-semibold">Key Test</h4>
-                <p className="text-muted-foreground">{primaryTest}</p>
+                <p className="text-muted-foreground">{primaryTest.name}</p>
             </div>
         )}
         {primaryMedication && (
             <div className="flex flex-col items-center justify-center p-4 text-center border rounded-lg bg-card/50">
                 <Pill className="w-8 h-8 mb-2 text-accent" />
                 <h4 className="font-semibold">Top Medication</h4>
-                <p className="text-muted-foreground">{primaryMedication}</p>
+                <p className="text-muted-foreground">{primaryMedication.name}</p>
             </div>
         )}
       </CardContent>

@@ -21,10 +21,12 @@ import {
   Stethoscope,
   TestTubeDiagonal,
   TrendingUp,
+  Info
 } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { KeyTakeaways } from './key-takeaways';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 
 interface DiagnosisDisplayProps {
   data: AnalyzePatientDataOutput;
@@ -145,7 +147,18 @@ export function DiagnosisDisplay({ data, documentFile, documentDataUri }: Diagno
         </SectionCard>
         
         <SectionCard icon={<TestTubeDiagonal className="h-5 w-5 text-primary" />} title="Recommended Tests">
-            <ListSection items={data.recommendedTests} />
+            <Accordion type="single" collapsible className="w-full">
+              {data.recommendedTests.map((test, index) => (
+                <AccordionItem value={`item-${index}`} key={index}>
+                  <AccordionTrigger className="text-sm font-medium hover:no-underline">{test.name}</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-muted-foreground pl-2 border-l-2 border-accent">
+                      <span className="font-semibold text-foreground">Rationale:</span> {test.rationale}
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
         </SectionCard>
         
         <SectionCard icon={<TrendingUp className="h-5 w-5 text-primary" />} title="Prognosis">
@@ -160,28 +173,70 @@ export function DiagnosisDisplay({ data, documentFile, documentDataUri }: Diagno
                     <CardTitle className="text-lg font-semibold">Comprehensive Treatment Plan</CardTitle>
                 </div>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-               <div className="p-4 rounded-lg bg-card/50">
-                    <div className="flex items-center gap-3 mb-2">
+          <CardContent>
+            <Accordion type="multiple" className="w-full space-y-4">
+              <AccordionItem value="medications" className="border rounded-lg p-4 bg-card/50">
+                <AccordionTrigger className="py-0 hover:no-underline">
+                   <div className="flex items-center gap-3">
                         <Pill className="h-5 w-5 text-accent" />
                         <h4 className="font-semibold">Medications</h4>
                     </div>
-                    <ListSection items={data.treatmentPlan.medications} />
-                </div>
-                <div className="p-4 rounded-lg bg-card/50">
-                    <div className="flex items-center gap-3 mb-2">
+                </AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="space-y-3">
+                    {data.treatmentPlan.medications.map((med, index) => (
+                      <div key={index} className="pl-4">
+                        <p className="font-semibold">{med.name} - <span className="font-normal italic">{med.dosage}</span></p>
+                        <p className="text-muted-foreground text-xs pl-2 border-l-2 border-accent/50 mt-1">
+                          <span className="font-semibold text-foreground/80">Rationale:</span> {med.rationale}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="therapies" className="border rounded-lg p-4 bg-card/50">
+                <AccordionTrigger className="py-0 hover:no-underline">
+                   <div className="flex items-center gap-3">
                         <FlaskConical className="h-5 w-5 text-accent" />
                         <h4 className="font-semibold">Therapies</h4>
                     </div>
-                    <ListSection items={data.treatmentPlan.therapies} />
-                </div>
-                <div className="p-4 rounded-lg bg-card/50">
-                    <div className="flex items-center gap-3 mb-2">
+                </AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="space-y-3">
+                    {data.treatmentPlan.therapies.map((therapy, index) => (
+                      <div key={index} className="pl-4">
+                        <p className="font-semibold">{therapy.name}</p>
+                        <p className="text-muted-foreground text-xs">{therapy.description}</p>
+                        <p className="text-muted-foreground text-xs pl-2 border-l-2 border-accent/50 mt-1">
+                          <span className="font-semibold text-foreground/80">Rationale:</span> {therapy.rationale}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="lifestyle" className="border rounded-lg p-4 bg-card/50">
+                <AccordionTrigger className="py-0 hover:no-underline">
+                  <div className="flex items-center gap-3">
                         <Apple className="h-5 w-5 text-accent" />
                         <h4 className="font-semibold">Lifestyle</h4>
                     </div>
-                    <ListSection items={data.treatmentPlan.lifestyleModifications} />
-                </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <div className="space-y-3">
+                    {data.treatmentPlan.lifestyleModifications.map((life, index) => (
+                      <div key={index} className="pl-4">
+                        <p className="font-semibold">{life.recommendation}</p>
+                        <p className="text-muted-foreground text-xs">{life.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </CardContent>
       </Card>
 

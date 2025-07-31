@@ -10,7 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
-import {saveAnalysisHistory} from '@/lib/firestore';
 
 const PatientAnalysisInputSchema = z.object({
   patientData: z.string().optional().describe('The unstructured patient report data.'),
@@ -26,10 +25,32 @@ export type AnalyzePatientDataInput = z.infer<
   typeof PatientAnalysisInputSchema
 >;
 
+const MedicationSchema = z.object({
+    name: z.string().describe("The name of the medication."),
+    dosage: z.string().describe("The recommended dosage (e.g., '10mg daily')."),
+    rationale: z.string().describe("The reason for recommending this specific medication."),
+});
+
+const TherapySchema = z.object({
+    name: z.string().describe("The name of the therapy or procedure."),
+    description: z.string().describe("A brief description of the therapy."),
+    rationale: z.string().describe("The reason for recommending this therapy."),
+});
+
+const LifestyleSchema = z.object({
+    recommendation: z.string().describe("The specific lifestyle modification recommended."),
+    description: z.string().describe("A brief description of the recommendation and its benefits."),
+});
+
 const TreatmentPlanSchema = z.object({
-    medications: z.array(z.string()).describe("A list of recommended medications."),
-    therapies: z.array(z.string()).describe("A list of recommended therapies or procedures."),
-    lifestyleModifications: z.array(z.string()).describe("A list of recommended lifestyle changes."),
+    medications: z.array(MedicationSchema).describe("A list of recommended medications with details."),
+    therapies: z.array(TherapySchema).describe("A list of recommended therapies or procedures with details."),
+    lifestyleModifications: z.array(LifestyleSchema).describe("A list of recommended lifestyle changes with details."),
+});
+
+const RecommendedTestSchema = z.object({
+    name: z.string().describe("The name of the recommended test."),
+    rationale: z.string().describe("The reason for recommending this test and what it helps to determine."),
 });
 
 const PatientAnalysisOutputSchema = z.object({
@@ -48,12 +69,12 @@ const PatientAnalysisOutputSchema = z.object({
       'A step-by-step explanation of how the AI arrived at the diagnosis, citing specific data points from the patient report.'
     ),
   recommendedTests: z
-    .array(z.string())
+    .array(RecommendedTestSchema)
     .describe(
-      'A list of recommended tests to confirm the diagnosis or rule out other possibilities.'
+      'An array of recommended tests, each with a name and rationale, to confirm the diagnosis or rule out other possibilities.'
     ),
   prognosis: z.string().describe("The likely course and outcome of the patient's condition."),
-  treatmentPlan: TreatmentPlanSchema.describe("A comprehensive plan for treating the patient's condition."),
+  treatmentPlan: TreatmentPlanSchema.describe("A comprehensive plan for treating the patient's condition with detailed rationale for each item."),
 });
 
 export type AnalyzePatientDataOutput = z.infer<
@@ -84,12 +105,12 @@ const analyzePatientDataPrompt = ai.definePrompt({
     2.  **Differential Diagnoses**: List other potential diagnoses in order of likelihood.
     3.  **Confidence Score**: Provide a confidence level (0.0 to 1.0) for your primary diagnosis.
     4.  **Diagnostic Reasoning**: Clearly explain your reasoning. Refer to specific symptoms, findings, or data points from the input.
-    5.  **Recommended Tests**: Suggest necessary diagnostic tests to confirm your findings.
+    5.  **Recommended Tests**: Suggest necessary diagnostic tests. For each test, provide both the test name and a clear rationale for why it's being recommended.
     6.  **Prognosis**: Describe the likely outcome for the patient with and without treatment.
     7.  **Treatment Plan**: Formulate a comprehensive treatment plan including:
-        -   Specific medications (with dosages if appropriate).
-        -   Therapies or procedures.
-        -   Lifestyle modifications.
+        -   **Medications**: Provide a list of specific medications. For each, include the name, recommended dosage, and the rationale for its use.
+        -   **Therapies**: Provide a list of therapies or procedures. For each, include its name, a brief description, and the rationale.
+        -   **Lifestyle Modifications**: Provide a list of lifestyle changes. For each, include the recommendation and a description of its benefits.
 
     Your response must be in the structured JSON format defined by the output schema. Ensure all fields are populated with accurate, clinically relevant information.`,
 });
