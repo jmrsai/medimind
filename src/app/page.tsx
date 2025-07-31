@@ -30,7 +30,7 @@ import { DiagnosisDisplay } from '@/components/diagnosis-display';
 
 import { type AnalyzePatientDataOutput, analyzePatientData } from '@/ai/flows/analyze-patient-data';
 import { AlertTriangle, FlaskConical, Loader2, Upload, X, File as FileIcon } from 'lucide-react';
-import { WelcomeDisplay } from '@/components/welcome-display';
+import { NewWelcomeComponent } from '@/components/new-welcome-component';
 import { LogoLoader } from '@/components/logo-loader';
 
 
@@ -198,7 +198,7 @@ export default function Page() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        {!isLoading && !error && !analysis && <WelcomeDisplay />}
+        {!isLoading && !error && !analysis && <NewWelcomeComponent />}
       </div>
     </div>
   );

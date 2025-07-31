@@ -1,10 +1,11 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, FileText, FlaskConical, Lightbulb, Zap } from 'lucide-react';
 import { Icons } from './icons';
 
 export function NewWelcomeComponent() {
   return (
-    <Card className="h-full border-2 border-dashed shadow-none">
+    <Card className="h-full border-2 border-dashed shadow-none bg-transparent">
         <CardHeader className='text-center'>
             <div className="inline-flex items-center justify-center p-3 mx-auto mb-4 border rounded-full bg-primary/10 w-14 h-14">
                 <Icons.logo className="w-8 h-8 text-primary" />
