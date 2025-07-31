@@ -30,7 +30,7 @@ export type SummarizeDocumentOutput = z.infer<typeof SummarizeDocumentOutputSche
 
 const summarizeDocumentPrompt = ai.definePrompt({
     name: 'summarizeDocumentPrompt',
-    model: 'googleai/gemini-1.5-pro-latest',
+    model: 'googleai/gemini-1.5-flash-latest',
     input: { schema: SummarizeDocumentInputSchema },
     output: { schema: SummarizeDocumentOutputSchema },
     prompt: `You are an expert medical document analyst. Your task is to provide a clear and concise summary of the provided medical document.
